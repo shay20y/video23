@@ -9,12 +9,16 @@ router.get("/", async (req, res) => {
     const sort = req.query.sort || "_id";
     const reverse = req.query.reverse == "yes" ? 1 : -1;
     const category = req.query.category;
+    const user_id = req.query.user_id;
 
 
     try {
         let filterFind = {};
         if (category) {
             filterFind = { category_code: category }
+        }
+        else if(user_id){
+            filterFind = {user_id}
         }
         const data = await VideoModel
             .find(filterFind)
