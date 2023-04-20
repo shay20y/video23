@@ -3,14 +3,37 @@ const { authAdmin } = require("../middlewares/auth");
 const { CategoryModel, validateCategory } = require("../models/categoryModel");
 const router = express.Router();
 
+
 router.get("/", async (req, res) => {
+  let perPage = req.query.perPage || 5;
+  let page = req.query.page - 1 || 0;
+  let sort = req.query.sort || "_id";
+  let reverse = req.query.reverse == "yes" ? 1 : -1;
+
   try {
-    let data = await CategoryModel.find({}).limit(20);
-    res.json(data);
+      let data = await CategoryModel
+          .find({})
+          .limit(perPage)
+          .skip(page * perPage)
+          .sort({ [sort]: reverse })
+      res.json(data);
   }
   catch (err) {
+      console.log(err);
+      res.status(502).json({ err })
+  }
+})
+
+router.get("/count" , async(req,res) => {
+  try{
+    let perPage = req.query.perPage || 5;
+    // יקבל רק את כמות הרשומות בקולקשן
+    const count = await CategoryModel.countDocuments({})
+    res.json({count,pages:Math.ceil(count/perPage)})
+  }
+  catch(err){
     console.log(err);
-    res.status(502).json({ err })
+    res.status(502).json({err})
   }
 })
 

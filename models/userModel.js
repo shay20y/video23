@@ -19,12 +19,14 @@ let schema = new mongoose.Schema({
   favs_ar: {
     type: Array, default: []
   }
-})
+},)
+// },{timestamps: true})
+// עושה זמן יצירה של אובייקט אוטומטית
 exports.UserModel = mongoose.model("users", schema);
 
 exports.createToken = (user_id, roleUser) => {
   let token = jwt.sign({ _id: user_id, role: roleUser }, config.tokenSecret, { expiresIn: "600mins" });
-  return token;60
+  return token;
 }
 
 
